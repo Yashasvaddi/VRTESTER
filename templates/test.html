@@ -52,7 +52,7 @@
         const ctx1 = canvas1.getContext('2d');
         const ctx2 = canvas2.getContext('2d');
 
-        navigator.mediaDevices.getUserMedia({ video: true })
+        navigator.mediaDevices.getUserMedia({ video: {facingMode:{exact:"environment"}} })
             .then(function(stream) {
                 video.srcObject = stream;
                 video.play();
