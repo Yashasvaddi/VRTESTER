@@ -32,7 +32,7 @@
         }
     </style>
 </head>
-<body>
+<body onclick="enableFullscreenOnce()" style="cursor:pointer;">
     <div class="camera">
         <div class="frame1">
             <canvas id="canvas1" width="640" height="480"></canvas>
@@ -46,6 +46,20 @@
     <video id="video1" width="640" height="480" autoplay style="display: none;"></video>
     
     <script>
+        function enableFullscreenOnce() {
+            const elem = document.documentElement;
+            if (elem.requestFullscreen) {
+                elem.requestFullscreen();
+            } else if (elem.webkitRequestFullscreen) {
+                elem.webkitRequestFullscreen();
+            } else if (elem.msRequestFullscreen) {
+                elem.msRequestFullscreen();
+            }
+
+            // Remove the event listener to prevent repeated fullscreen requests
+            document.body.onclick = null;
+            document.body.style.cursor = 'default';
+        }
         const video = document.getElementById('video1');
         const canvas1 = document.getElementById('canvas1');
         const canvas2 = document.getElementById('canvas2');
