@@ -3,61 +3,71 @@
 <head>
     <title>Tester</title>
     <style>
-        video, canvas, img {
+        .camera{
+            /* border: 3px black solid; */
+            display: flex;
+        }
+        .frame1{
+            /* border: 3px grey solid; */
+            flex:5;
+            left:10%;
+            display: flex;
+        }
+        .frame2{
+            /* border: 3px grey solid; */
+            flex:5;
+            left:10%;
+            display: flex;
+        }
+        #video1{
+            position:absolute;
+        }
+        #video1, canvas, img {
             display: block;
             margin: 10px auto;
             max-width: 80%;
         }
-        button {
-            display: block;
-            margin: 10px auto;
-            padding: 10px 20px;
+        body{
+            background-color: black;
         }
     </style>
 </head>
 <body>
+    <div class="camera">
+        <div class="frame1">
+            <canvas id="canvas1" width="640" height="480"></canvas>
+        </div>
+        <div class="frame2">
+            <canvas id="canvas2" width="640" height="480"></canvas>
+        </div>
+    </div>
 
-    <h2 style="text-align:center;">Live Camera Feed</h2>
-    
     <!-- Live camera video stream -->
-    <video id="video" width="640" height="480" autoplay></video>
+    <video id="video1" width="640" height="480" autoplay style="display: none;"></video>
     
-    <!-- Capture button -->
-    <button id="snap">Capture Photo</button>
-
-    <!-- Canvas to draw captured frame -->
-    <canvas id="canvas" width="640" height="480" style="display:none;"></canvas>
-
-    <!-- Image from canvas -->
-    <img id="photo" src="" alt="Captured Image">
-
-    <!-- Static image from Flask -->
-    <h3 style="text-align:center;">Static Test Image</h3>
-    <img src="{{ url_for('static', filename='test.jpg') }}" alt="Static Image">
-
     <script>
-        // Get DOM elements
-        const video = document.getElementById('video');
-        const canvas = document.getElementById('canvas');
-        const photo = document.getElementById('photo');
-        const snap = document.getElementById("snap");
+        const video = document.getElementById('video1');
+        const canvas1 = document.getElementById('canvas1');
+        const canvas2 = document.getElementById('canvas2');
+        const ctx1 = canvas1.getContext('2d');
+        const ctx2 = canvas2.getContext('2d');
 
-        // Access user's webcam
         navigator.mediaDevices.getUserMedia({ video: true })
             .then(function(stream) {
                 video.srcObject = stream;
+                video.play();
+
+                function draw() {
+                    ctx1.drawImage(video, 0, 0, canvas1.width, canvas1.height);
+                    ctx2.drawImage(video, 0, 0, canvas2.width, canvas2.height);
+                    requestAnimationFrame(draw);
+                }
+
+                draw();
             })
             .catch(function(err) {
-                console.error("Error accessing camera: " + err);
+                console.error("Error accessing camera:", err);
             });
-
-        // Capture photo from video on button click
-        snap.addEventListener("click", function() {
-            const context = canvas.getContext('2d');
-            context.drawImage(video, 0, 0, canvas.width, canvas.height);
-            const imageDataURL = canvas.toDataURL("image/png");
-            photo.src = imageDataURL;
-        });
     </script>
 
 </body>
